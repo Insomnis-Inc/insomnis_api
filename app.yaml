@@ -1,8 +1,22 @@
-runtime: php72
+runtime: php74
+handlers:
+    - url: /(.*\.(gif|mp4|mov|mkv|mp3|wav|png|jpg|css|js))$
+      static_files: public/\1
+      upload: public/.*\.(gif|mp4|mov|mkv|mp3|wav|png|jpg|css|js)$
+    - url: /.*
+      secure: always
+      redirect_http_response_code: 301
+      script: auto
 env_variables:
-   APP_KEY: base64:38AMpxIJ0+dDF/9tzDMPqidzEVJRIPtxPA47jLh3ors=
-   APP_STORAGE: /tmp
-   VIEW_COMPILED_PATH: /tmp
+  APP_KEY: base64:38AMpxIJ0+dDF/9tzDMPqidzEVJRIPtxPA47jLh3ors=
+  APP_STORAGE: /tmp
+  VIEW_COMPILED_PATH: /tmp
+  CACHE_DRIVER: database
+  SESSION_DRIVER: database
+  DB_DATABASE: db-ESewY8WYKYGtRV
+  DB_USERNAME: root
+  DB_PASSWORD: 3nzU1Eyty?|*,-Uo
+  DB_SOCKET: "/cloudsql/insomnis:asia-south1:insomnis-mysql-db"
 
 
 
