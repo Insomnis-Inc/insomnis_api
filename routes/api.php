@@ -87,6 +87,7 @@ Route::get('comments/{comment}/check/{user}', 'CommentController@commentComments
 // Events
 Route::post('events/{user}', 'EventController@store');
 Route::get('events/{user}', 'EventController@index');
+Route::get('events/{user}/type/{type}', 'EventController@eventType');
 // to show use Posts show
 // to update use Posts update
 Route::get('events/{post}/delete', 'EventController@destroy');

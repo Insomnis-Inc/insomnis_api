@@ -31,6 +31,20 @@ class EventController extends Controller
             'message' => 'Retrieved successfully'], 200);
     }
 
+    public function eventType(User $user, $type)
+    {
+        $query = DB::table('events')->where('event_type', $type)->get();
+        $results = collect();
+        foreach ($query as $key) {
+            $row = DB::table('posts')->where('id', $key->post_id)->get();
+            $results = $results->merge(PostController::postResults($row, $user));
+        }
+
+        // return json
+        return response(['data' => new ResultResource($results),
+            'message' => 'Retrieved successfully'], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
