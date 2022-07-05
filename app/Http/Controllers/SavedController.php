@@ -48,7 +48,7 @@ class SavedController extends Controller
                 'message' => 'Saved successfully'], 200);
         }
 
-        DB::table('saved_posts')->create([
+        DB::table('saved_posts')->insert([
             'user_id' => $user->id,
             'post_id' => $post->id,
             'created_at' => Carbon::now()

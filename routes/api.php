@@ -101,3 +101,15 @@ Route::get('users/{user}/posts/{post}/save', 'SavedController@savePost');
 Route::get('users/{user}/posts/{post}/unsave', 'SavedController@unsavePost');
 Route::get('users/{user}/savedposts', 'SavedController@index');
 
+// ===========================================================================
+// ==================================== EXTRAS ===============================
+// ===========================================================================
+Route::post('extras/{user}/posts', 'ExtraController@storePost');
+Route::post('extras', 'ExtraController@createExtra');
+Route::get('extras/', 'ExtraController@index');
+Route::get('search/{term}/extras/{extra}/users/{user}', 'ExtraController@searchExtraPosts');
+Route::get('extras/{extra}/users/{user}', 'ExtraController@showExtraPosts');
+Route::get('extras/{extra}/delete', 'ExtraController@destroy');
+Route::get('extras/{post}/postdelete', 'ExtraController@destroyExtraPost');
+
+

@@ -126,7 +126,7 @@ class PostController extends Controller
      * if 'extra', the request should include 'extra_id' parameter
      *
      */
-    public function store(Request $request, User $user, $event = false)
+    public function store(Request $request, User $user, $event = false, $extra = false)
     {
         // validate
 
@@ -146,6 +146,13 @@ class PostController extends Controller
             $event = DB::table('events')->insert([
                 'id' => Uuid::uuid4(),
                 'event_type' => $request->input('event_type') ?? 'Clubs',
+                'post_id' => $post->id
+            ]);
+        }
+
+        if($extra) {
+             $extra = DB::table('extra_posts')->insert([
+                'extra_id' =>$request->input('extra_id'),
                 'post_id' => $post->id
             ]);
         }
