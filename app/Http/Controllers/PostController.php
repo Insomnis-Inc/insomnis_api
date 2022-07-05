@@ -117,14 +117,17 @@ class PostController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * =========================================
+     * ============== READ ME PLEASE ===========
+     * =========================================
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * if 'event', the request should include 'event_type' parameter
+     *
+     * if 'extra', the request should include 'extra_id' parameter
+     *
      */
     public function store(Request $request, User $user, $event = false)
     {
-
         // validate
 
         // move file
@@ -242,16 +245,20 @@ class PostController extends Controller
 
     public static function uploadFile(Request $request, $name)
     {
-        $isImage = $request->input('type') == 'image';
+
+        // type == audio, image, video
+        $type = $request->input('type');
         $video_path = 'uploads/video/';
         $image_path = 'uploads/image/';
+        $audio_path = 'uploads/audio/';
 
         if($request->hasFile($name)) {
             $file = $request->file($name);
             $img_name = time().Str::random(32).$file->getClientOriginalName();
             $extension = $file->extension();
 
-            $result = $isImage? $image_path.$img_name :  $video_path.$img_name;
+            $result = $type == 'image' ? $image_path.$img_name :
+                    ( $type == 'video'? $video_path.$img_name : $audio_path.$img_name );
 
             move_uploaded_file($_FILES[$name]['tmp_name'], $result);
 

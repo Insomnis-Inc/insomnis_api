@@ -93,4 +93,11 @@ Route::get('events/{user}/type/{type}', 'EventController@eventType');
 Route::get('events/{post}/delete', 'EventController@destroy');
 
 
+// Interests
+Route::get('interests', 'InterestController@index');
+
+// Saved Posts
+Route::get('users/{user}/posts/{post}/save', 'SavedController@savePost');
+Route::get('users/{user}/posts/{post}/unsave', 'SavedController@unsavePost');
+Route::get('users/{user}/savedposts', 'SavedController@index');
 
