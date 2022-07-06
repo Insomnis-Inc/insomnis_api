@@ -29,14 +29,15 @@ class ExtraController extends Controller
 
     public function searchExtraPosts($term, Extra $extra, User $user)
     {
-        $posts = DB::table('posts')->where('text', 'LIKE', '%'.$term.'%')->get();
+        $posts_query = DB::table('posts')->where('text', 'LIKE', '%'.$term.'%')->get();
 
-        if($posts->isEmpty()) {
-            // return
+        if($posts_query->isEmpty()) {
+            return response(['posts' => [],
+            'message' => 'Retrieved successfully'], 200);
         }
 
         $res = collect();
-        foreach ($posts as $row) {
+        foreach ($posts_query as $row) {
             $query = DB::table('extra_posts')
                     ->where('extra_id', $extra->id)
                     ->where('post_id', $row->id)
@@ -47,8 +48,17 @@ class ExtraController extends Controller
             }
         }
 
-        $posts = PostController::postResults($res, $user);
+        if(!$res->isEmpty()) {
+            $result = collect();
+            foreach ($res as $row) {
+                $single_q = DB::table('posts')->where('id', $row->post_id)->get();
+                $result = $result->merge($single_q);
+            }
 
+            $posts = PostController::postResults($result, $user);
+        } else {
+            $posts = collect();
+        }
         // return json
         return response(['posts' => new ResultResource($posts),
             'message' => 'Retrieved successfully'], 200);

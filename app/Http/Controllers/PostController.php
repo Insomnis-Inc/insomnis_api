@@ -125,6 +125,8 @@ class PostController extends Controller
      *
      * if 'extra', the request should include 'extra_id' parameter
      *
+     * Posts are of type:
+     *  'text', 'video', 'audio', 'image'
      */
     public function store(Request $request, User $user, $event = false, $extra = false)
     {

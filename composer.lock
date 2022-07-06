@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cedd10977f4e24d25e0a665450c37a48",
+    "content-hash": "134ada8169eb449f24216491ac572f62",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5293,6 +5293,72 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "apility/laravel-ngrok",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/apility/laravel-ngrok.git",
+                "reference": "6f232eebdee7ec54d15ee66d0c72617eb71bb7a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/apility/laravel-ngrok/zipball/6f232eebdee7ec54d15ee66d0c72617eb71bb7a5",
+                "reference": "6f232eebdee7ec54d15ee66d0c72617eb71bb7a5",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "illuminate/console": "^5.8|^6.0|^7.0|^8.0",
+                "illuminate/http": "^5.8|^6.0|^7.0|^8.0",
+                "illuminate/pagination": "^5.8|^6.0|^7.0|^8.0",
+                "illuminate/routing": "^5.8|^6.0|^7.0|^8.0",
+                "illuminate/support": "^5.8|^6.0|^7.0|^8.0",
+                "php": "^7.3",
+                "symfony/process": "^4.0|^5.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.8|^4.0|^5.0",
+                "phpunit/phpunit": "^8.3|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Apility\\Laravel\\Ngrok\\NgrokServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Apility\\Laravel\\Ngrok\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jairo Correa",
+                    "email": "jn.j41r0@gmail.com"
+                },
+                {
+                    "name": "Thomas Alrek",
+                    "email": "thomas@apility.no"
+                }
+            ],
+            "description": "Share Laravel application with ngrok.",
+            "homepage": "https://github.com/apility/laravel-ngrok",
+            "keywords": [
+                "apility",
+                "laravel-ngrok"
+            ],
+            "support": {
+                "source": "https://github.com/apility/laravel-ngrok/tree/v2.2.0"
+            },
+            "time": "2021-06-23T08:06:17+00:00"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.4.1",
