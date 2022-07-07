@@ -20,3 +20,7 @@ env_variables:
 
 
 
+# php artisan cache:table
+# php artisan migrate
+# if you have done everything right and the api
+#
