@@ -257,9 +257,10 @@ class PostController extends Controller
 
         // type == audio, image, video
         $type = $request->input('type');
-        $video_path = 'uploads/video/';
-        $image_path = 'uploads/image/';
-        $audio_path = 'uploads/audio/';
+        $video_path = public_path().'/uploads/video/';
+        $image_path = public_path().'/uploads/image/';
+        $audio_path = public_path().'/uploads/audio/';
+        // $filepath = "gs://$bucket.appspot.com/uploadedfiles/$filename";
 
         if($request->hasFile($name)) {
             $file = $request->file($name);

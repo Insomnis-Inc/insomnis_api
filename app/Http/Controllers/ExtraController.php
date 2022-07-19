@@ -89,6 +89,7 @@ class ExtraController extends Controller
      */
     public function storePost(Request $request, User $user)
     {
+        // add extra_id in yo request just
         $p = new PostController();
         return $p->store($request, $user, false, true);
     }

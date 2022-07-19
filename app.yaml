@@ -19,6 +19,12 @@ env_variables:
   DB_SOCKET: "/cloudsql/insomnis:asia-south1:insomnis-mysql-db"
 
 
+# to deploy use this
+# gcloud beta app deploy --no-cache
+
+# not
+# gcloud app deploy
+
 
 # php artisan cache:table
 # php artisan migrate

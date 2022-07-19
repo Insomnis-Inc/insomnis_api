@@ -37,12 +37,12 @@ class SearchController extends Controller
     public function timeline(User $user)
     {
         // get followers then show followers posts
-        $posts = Post::orderByDesc('likes')->take(40)->get();
+        // $posts = Post::orderByDesc('likes')->take(40)->get();
+        $posts = DB::table('posts')->orderByDesc('likes')->take(50)->get();
 
         $posts = PostController::postResults($posts, $user);
 
         // return json
-        $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
         return ['posts' => $posts,
         'message' => 'Retrieved successfully'];
     }
