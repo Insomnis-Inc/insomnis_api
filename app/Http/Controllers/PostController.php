@@ -125,10 +125,12 @@ class PostController extends Controller
      *
      * if 'extra', the request should include 'extra_id' parameter
      *
+     * if 'group', the request should include 'group_id' parameter
+     *
      * Posts are of type:
      *  'text', 'video', 'audio', 'image'
      */
-    public function store(Request $request, User $user, $event = false, $extra = false)
+    public function store(Request $request, User $user, $event = false, $extra = false, $group = false)
     {
         // validate
 
@@ -155,6 +157,13 @@ class PostController extends Controller
         if($extra) {
              $extra = DB::table('extra_posts')->insert([
                 'extra_id' =>$request->input('extra_id'),
+                'post_id' => $post->id
+            ]);
+        }
+
+        if($group) {
+            DB::table('group_posts')->insert([
+                'group_id' =>$request->input('group_id'),
                 'post_id' => $post->id
             ]);
         }

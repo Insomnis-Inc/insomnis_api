@@ -19,7 +19,12 @@ class GroupController extends Controller
      */
     public function index()
     {
-        //
+        $groups = DB::table('groups')->orderBy('member_count')->get();
+        foreach ($groups as $row) {
+            $row->created_at = CommentController::diffHumans($row);
+        }
+        return response(['data' => new ResultResource($groups),
+        'message' => 'Group created successfully'], 200);
     }
 
     /**
@@ -42,6 +47,9 @@ class GroupController extends Controller
             'user_id' => $user->id
         ]);
 
+        $group->increment('member_count');
+        $group->save();
+
 
         return response([
          'message' => 'User added successfully'], 200);
@@ -56,11 +64,16 @@ class GroupController extends Controller
      */
     public function removeUsers(Group $group, User $user)
     {
-        DB::table('group_users')->delete([
+        DB::table('group_users')->where([
             'group_id' => $group->id,
             'user_id' => $user->id
-        ]);
+        ])->delete();
 
+
+        if($group->member_count > 1) {
+            $group->decrement('member_count');
+            $group->save();
+        }
 
         return response([
          'message' => 'User removed successfully'], 200);
@@ -95,7 +108,8 @@ class GroupController extends Controller
             'name' => $request->input('name'),
             'profile_pic' => $profile_pic_path,
             'cover_pic' => $cover_pic_path,
-            'admin_id' => $user->id
+            'admin_id' => $user->id,
+            'member_count' => 1,
         ]);
 
         DB::table("group_users")->insert([
@@ -131,7 +145,8 @@ class GroupController extends Controller
         $results = [
             'group' => $groups_query,
             'admin' => $admin,
-            'users' => $users
+            'users' => $users,
+            'is_admin' => $is_admin
         ];
         return response(['data' => new ResultResource($results),
             'message' => 'Retrieved successfully'], 200);
@@ -152,7 +167,6 @@ class GroupController extends Controller
         $cover_pic_path = UserController::uploadOneImage($request, 'cover_pic');
 
         $group->update([
-            'id' => Uuid::uuid4(),
             'name' => $request->input('name'),
             'profile_pic' => $profile_pic_path,
             'cover_pic' => $cover_pic_path
@@ -178,4 +192,77 @@ class GroupController extends Controller
             'message' => 'Deleted successfully'], 200);
 
     }
+
+
+    // group posts
+    public function storePost(Request $request, User $user)
+    {
+        // add group_id in yo request just
+        $p = new PostController();
+        return $p->store($request, $user, false, false, true);
+    }
+
+    public function showGroupPosts(Group $group, User $user)
+    {
+        $query = DB::table('group_posts')
+                ->where('group_id', $group->id)
+                ->get();
+
+        if($query->isEmpty()) {
+            return response([
+                'data' => [],
+                'message' => 'Retrieved successfully'], 200);
+        }
+
+        $res = collect();
+        foreach ($query as $row) {
+            $post_query = DB::table('posts')->where('id', $row->post_id)->get();
+            $res = $res->merge($post_query);
+        }
+
+        $posts = PostController::postResults($res, $user);
+         // return json
+        return response(['data' => new ResultResource($posts),
+            'message' => 'Retrieved successfully'], 200);
+    }
+
+
+    public function searchGroupPosts($term, Group $group, User $user)
+    {
+        $posts_query = DB::table('posts')->where('text', 'LIKE', '%'.$term.'%')->get();
+
+        if($posts_query->isEmpty()) {
+            return response(['posts' => [],
+            'message' => 'Retrieved successfully'], 200);
+        }
+
+        $res = collect();
+        foreach ($posts_query as $row) {
+            $query = DB::table('group_posts')
+                    ->where('group_id', $group->id)
+                    ->where('post_id', $row->id)
+                    ->get();
+
+            if(!$query->isEmpty()) {
+                $res = $res->merge($query);
+            }
+        }
+
+        if(!$res->isEmpty()) {
+            $result = collect();
+            foreach ($res as $row) {
+                $single_q = DB::table('posts')->where('id', $row->post_id)->get();
+                $result = $result->merge($single_q);
+            }
+
+            $posts = PostController::postResults($result, $user);
+        } else {
+            $posts = collect();
+        }
+        // return json
+        return response(['posts' => new ResultResource($posts),
+            'message' => 'Retrieved successfully'], 200);
+    }
+
+
 }
