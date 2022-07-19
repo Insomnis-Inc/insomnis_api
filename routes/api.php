@@ -113,3 +113,14 @@ Route::get('extras/{extra}/delete', 'ExtraController@destroy');
 Route::get('extras/{post}/postdelete', 'ExtraController@destroyExtraPost');
 
 
+
+// ===========================================================================
+// ==================================== GROUPS ===============================
+// ===========================================================================
+Route::post('groups/{user}', 'GroupController@store');
+Route::get('groups', 'GroupController@index');
+Route::post('groups/{group}/update', 'GroupController@update');
+Route::get('groups/{group}/users/{user}', 'GroupController@show');
+Route::get('groups/{group}/delete', 'GroupController@destroy');
+Route::get('groups/{group}/users/{user}/add', 'GroupController@addUsers');
+Route::get('groups/{group}/users/{user}/remove', 'GroupController@removeUsers');
