@@ -12,6 +12,44 @@ use App\Http\Resources\ResultResource;
 class SavedController extends Controller
 {
 
+
+    public function searchSavedPosts($term, User $user)
+    {
+        $posts_query = DB::table('posts')->where('text', 'LIKE', '%'.$term.'%')->get();
+
+        if($posts_query->isEmpty()) {
+            return response(['posts' => [],
+            'message' => 'Retrieved successfully'], 200);
+        }
+
+        $res = collect();
+        foreach ($posts_query as $row) {
+            $query = DB::table('saved_posts')
+                    ->where('user_id', $user->id)
+                    ->where('post_id', $row->id)
+                    ->get();
+
+            if(!$query->isEmpty()) {
+                $res = $res->merge($query);
+            }
+        }
+
+        if(!$res->isEmpty()) {
+            $result = collect();
+            foreach ($res as $row) {
+                $single_q = DB::table('posts')->where('id', $row->post_id)->get();
+                $result = $result->merge($single_q);
+            }
+
+            $posts = PostController::postResults($result, $user);
+        } else {
+            $posts = collect();
+        }
+        // return json
+        return response(['posts' => new ResultResource($posts),
+            'message' => 'Retrieved successfully'], 200);
+    }
+
     public function index(User $user)
     {
         $query = DB::table('saved_posts')
