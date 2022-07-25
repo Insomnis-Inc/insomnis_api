@@ -30,3 +30,7 @@ env_variables:
 # php artisan migrate
 # if you have done everything right and the api
 #
+
+
+# Database
+#  ./cloud_sql_proxy -instances=insomnis:asia-south1:insomnis-mysql-db=tcp:3306

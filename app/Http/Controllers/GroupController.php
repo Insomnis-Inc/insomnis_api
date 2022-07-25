@@ -27,6 +27,27 @@ class GroupController extends Controller
         'message' => 'Group created successfully'], 200);
     }
 
+    public function userGroups(User $user)
+    {
+        $query = DB::table('group_users')->where('user_id', $user->id)->get();
+
+        if(!$query->isEmpty()) {
+            return response(['data' => [],
+            'message' => 'Retrieved successfully'], 200);
+        }
+
+        $groups = collect();
+        foreach ($query as $row) {
+            $groups = $groups->merge(DB::table('groups')->where('id', $row->group_id)->get());
+        }
+
+        foreach ($groups as $row) {
+            $row->created_at = CommentController::diffHumans($row);
+        }
+        return response(['data' => new ResultResource($groups),
+        'message' => 'Retrieved successfully'], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

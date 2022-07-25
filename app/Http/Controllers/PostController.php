@@ -40,6 +40,7 @@ class PostController extends Controller
             $key->created_at = CommentController::diffHumans($key);
             $key->creator = DB::table('users')->where('id', $key->creator_id)->get();
             $key->liked = PostController::checkPostLike(Post::find($key->id), $user);
+            $key->saved = PostController::checkPostSaved(Post::find($key->id), $user);
         }
 
         return $query;
@@ -294,6 +295,16 @@ class PostController extends Controller
             $liked = '1';
         }
         return $liked;
+    }
+
+    public static function checkPostSaved(Post $post, User $user) {
+        $query = DB::table('saved_posts')->where('post_id', $post->id)
+        ->where('user_id', $user->id)->get();
+        $saved = '0';
+        if(!$query->isEmpty()) {
+            $saved = '1';
+        }
+        return $saved;
     }
 
 

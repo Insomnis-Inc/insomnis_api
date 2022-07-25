@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ResultResource;
+use App\User;
 
 class ChatRoomController extends Controller
 {
@@ -22,6 +23,24 @@ class ChatRoomController extends Controller
         return response(['data' => new ResultResource($results),
         'message' => 'Retrieved successfully'], 200);
     }
+
+    // public function userChatRooms(User $user)
+    // {
+    //     $query = DB::table('messages')
+    //                         ->where('sender_id', $user->id)
+    //                         ->get();
+
+    //     foreach ($query as $row) {
+    //         # cod
+    //     }
+
+
+    //     $results = $this->messageResults($messages_query);
+
+
+    //     return response(['data' => new ResultResource($results),
+    //     'message' => 'Retrieved successfully'], 200);
+    // }
 
     public static function messageResults($query)
     {
