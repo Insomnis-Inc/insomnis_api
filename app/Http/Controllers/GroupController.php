@@ -31,7 +31,7 @@ class GroupController extends Controller
     {
         $query = DB::table('group_users')->where('user_id', $user->id)->get();
 
-        if(!$query->isEmpty()) {
+        if($query->isEmpty()) {
             return response(['data' => [],
             'message' => 'Retrieved successfully'], 200);
         }
@@ -112,8 +112,8 @@ class GroupController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'profile_pic' => 'image|mimes:jpeg,png,jpg',
-            'cover_pic' => 'image|mimes:jpeg,png,jpg',
+            // 'profile_pic' => 'image|mimes:jpeg,png,jpg',
+            // 'cover_pic' => 'image|mimes:jpeg,png,jpg',
         ]);
 
         if($validator->fails()){
