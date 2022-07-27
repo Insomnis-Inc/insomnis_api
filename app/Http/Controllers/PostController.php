@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
-
+use Google\Cloud\Storage\StorageClient;
 
 
 // $table->enum('type', ['image', 'video', 'text']);
@@ -262,30 +262,61 @@ class PostController extends Controller
     //     }
     // }
 
-    public static function uploadFile(Request $request, $name)
-    {
+    // public static function uploadFile(Request $request, $name)
+    // {
 
-        // type == audio, image, video
-        $type = $request->input('type');
-        $video_path = public_path().'/uploads/video/';
-        $image_path = public_path().'/uploads/image/';
-        $audio_path = public_path().'/uploads/audio/';
-        // $filepath = "gs://$bucket.appspot.com/uploadedfiles/$filename";
+    //     // type == audio, image, video
+    //     $type = $request->input('type');
+    //     $video_path = public_path().'/uploads/video/';
+    //     $image_path = public_path().'/uploads/image/';
+    //     $audio_path = public_path().'/uploads/audio/';
+    //     // $filepath = "gs://$bucket.appspot.com/uploadedfiles/$filename";
 
-        if($request->hasFile($name)) {
-            $file = $request->file($name);
-            $img_name = time().Str::random(32).$file->getClientOriginalName();
-            $extension = $file->extension();
+    //     if($request->hasFile($name)) {
+    //         $file = $request->file($name);
+    //         $img_name = time().Str::random(32).$file->getClientOriginalName();
+    //         $extension = $file->extension();
 
-            $result = $type == 'image' ? $image_path.$img_name :
-                    ( $type == 'video'? $video_path.$img_name : $audio_path.$img_name );
+    //         $result = $type == 'image' ? $image_path.$img_name :
+    //                 ( $type == 'video'? $video_path.$img_name : $audio_path.$img_name );
 
-            move_uploaded_file($_FILES[$name]['tmp_name'], $result);
+    //         move_uploaded_file($_FILES[$name]['tmp_name'], $result);
 
 
-            return $result;
-        }
+    //         return $result;
+    //     }
+    // }
+
+
+/**
+ * Upload a file.
+ *
+ * composer require google/cloud
+ *
+ * @param string $bucketName The name of your Cloud Storage bucket.
+ * @param string $objectName The name of your Cloud Storage object.
+ * @param string $source The path to the file to upload.
+ */
+public static function uploadFile(Request $request, $name)
+{
+    $bucketName = 'insomnis_assets';
+    // $source = '/path/to/your/file';
+
+    if($request->hasFile($name)) {
+        $fileNameGen = $request->file($name);
+        $objectName = time().Str::random(32).$fileNameGen->getClientOriginalName();
+        $storage = new StorageClient();
+        $file = fopen($_FILES[$name]['tmp_name'], 'r');
+        $bucket = $storage->bucket($bucketName);
+        $object = $bucket->upload($file, [
+            'name' => $objectName
+        ]);
+        // printf('Uploaded %s to gs://%s/%s' . PHP_EOL, basename($$_FILES[$name]['tmp_name']), $bucketName, $objectName);
+
+        return 'https://storage.googleapis.com/' . $bucketName . '/' . $objectName;
     }
+}
+
 
     public static function checkPostLike(Post $post, User $user) {
         $query = DB::table('user_posts_likes')->where('post_id', $post->id)

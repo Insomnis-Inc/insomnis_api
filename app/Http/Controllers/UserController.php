@@ -9,6 +9,7 @@ use Ramsey\Uuid\Uuid;
 use App\Http\Resources\ResultResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Google\Cloud\Storage\StorageClient;
 
 
 // $table->enum('type', ['Bar', 'User', 'Restaurant', 'Hotel', 'Apartment']);
@@ -292,21 +293,25 @@ class UserController extends Controller
     public static function uploadOneImage(Request $request, $name, $cover = false )
     {
         //COVER IMAGE
-        $path = 'uploads/users/';
+        // $path = 'uploads/users/';
+        $bucketName = 'insomnis_assets';
         if($request->hasFile($name)) {
-        $file = $request->file($name);
-        $img_name = time().Str::random(32).$file->getClientOriginalName();
-        $extension = $file->extension();
-
-        move_uploaded_file($_FILES[$name]['tmp_name'], $path.$img_name);
+            $fileNameGen = $request->file($name);
+            $objectName = time().Str::random(32).$fileNameGen->getClientOriginalName();
+            $storage = new StorageClient();
+            $file = fopen($_FILES[$name]['tmp_name'], 'r');
+            $bucket = $storage->bucket($bucketName);
+            $object = $bucket->upload($file, [
+                'name' => $objectName
+            ]);
         } else {
-            $img_name = 'profile.png';
+            $img_name = 'https://storage.googleapis.com/insomnis_assets/profile.png';
             if($cover) {
-                $img_name = 'cover.png';
+                $img_name = 'https://storage.googleapis.com/insomnis_assets/profile.png';
             }
         }
 
-        return $path.$img_name;
+        return $img_name;
     }
 
 
