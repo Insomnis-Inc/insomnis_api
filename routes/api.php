@@ -42,7 +42,9 @@ Route::post('users/{user}/profile_photo', 'UserController@changeProfilePhoto');
  // update names, bio, address
  Route::post('users/{user}/update', 'UserController@changeNamesBioAddress');
 
-Route::get('users/{user}', 'UserController@show');
+Route::get('users/{user}/profile/{me}', 'UserController@show');
+
+// Route::get('usersindex', 'UserController@index');
 
 // follow
 Route::get('users/{user}/follow/{toFollow}', 'UserController@follow');
@@ -119,8 +121,8 @@ Route::get('extras/{post}/postdelete', 'ExtraController@destroyExtraPost');
 // ==================================== GROUPS ===============================
 // ===========================================================================
 Route::post('groups/{user}', 'GroupController@store'); //
-Route::get('groups', 'GroupController@index'); //
-Route::get('groups/{user}', 'GroupController@userGroups'); //
+Route::get('groups/{user}', 'GroupController@index'); //
+Route::get('groups/{user}/member', 'GroupController@userGroups'); //
 Route::post('groups/{group}/update', 'GroupController@update'); //
 Route::get('groups/{group}/users/{user}', 'GroupController@show'); //
 Route::get('groups/{group}/delete', 'GroupController@destroy'); //

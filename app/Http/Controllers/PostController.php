@@ -25,10 +25,10 @@ class PostController extends Controller
     public function index(User $user)
     {
         $posts = DB::table('posts')->where('creator_id', $user->id)->get();
-        $posts = $this->postResults($posts, $user);
+        $results = $this->postResults($posts, $user);
 
         // return json
-        return response(['data' => new ResultResource($posts),
+        return response(['data' => new ResultResource($results),
             'message' => 'Retrieved successfully'], 200);
 
     }

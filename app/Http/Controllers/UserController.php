@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use App\Http\Resources\ResultResource;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 
 // $table->enum('type', ['Bar', 'User', 'Restaurant', 'Hotel', 'Apartment']);
@@ -22,12 +23,22 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        DB::table('user_follower')->truncate();
+        $query = DB::table('users')->get();
+        foreach ($query as $row) {
+            $user = User::find($row->id);
+            $user->update([
+                'following' => 0,
+                'followers' => 0
+            ]);
+
+            $user->save();
+        }
     }
 
     public function follow(User $user, User $toFollow)
     {
-        $user->follow($toFollow);
+        $this->followUser($user, $toFollow);
         $user->increment('following');
         $toFollow->increment('followers');
         return response([
@@ -36,27 +47,84 @@ class UserController extends Controller
 
     public function unfollow(User $user, User $toUnfollow)
     {
-        $user->unfollow($toUnfollow);
+        $this->unfollowUser($user, $toUnfollow);
         $user->decrement('following');
         $toUnfollow->decrement('followers');
         return response([
          'message' => 'Unfollowed Successfully'], 200);
     }
 
+    public static function followUser(User $user, User $toFollow)
+    {
+        $query = DB::table('user_follower')->where('follower_id', $user->id)
+        ->where('user_id', $toFollow->id)->get();
+
+        if(!$query->isEmpty()) {
+            return 1;
+        }
+
+        $query = DB::table('user_follower')->insert([
+            'follower_id' => $user->id,
+            'user_id' => $toFollow->id
+        ]);
+
+
+        return 1;
+    }
+
+    public static function unfollowUser(User $user, User $toUnfollow)
+    {
+        $query = DB::table('user_follower')->where('follower_id', $user->id)
+        ->where('user_id', $toUnfollow->id)->get();
+
+        if($query->isEmpty()) {
+            return 1;
+        }
+
+
+        DB::table('user_follower')->where('follower_id', $user->id)
+        ->where('user_id', $toUnfollow->id)->delete();
+
+
+        return 1;
+    }
+
     public function followings(User $user)
     {
-        $followings = $user->followings;
+        $query = DB::table('user_follower')->where('follower_id', $user->id)->get();
 
-        return response(['data' => new ResultResource($followings),
+        if($query->isEmpty()) {
+            return response(['data' => [],
+            'message' => 'Retrieved Followings'], 200);
+        }
+
+        $results = collect();
+        foreach ($query as $row) {
+           $results = $results->merge(DB::table('users')->where('id', $row->user_id)->get());
+        }
+
+
+        return response(['data' => new ResultResource($results),
          'message' => 'Retrieved followings'], 200);
     }
 
     public function followers(User $user)
     {
-        $followers = $user->followers;
+        $query = DB::table('user_follower')->where('user_id', $user->id)->get();
 
-        return response(['data' => new ResultResource($followers),
-         'message' => 'Retrieved Followers'], 200);
+        if($query->isEmpty()) {
+            return response(['data' => [],
+            'message' => 'Retrieved Followings'], 200);
+        }
+
+        $results = collect();
+        foreach ($query as $row) {
+           $results = $results->merge(DB::table('users')->where('id', $row->follower_id)->get());
+        }
+
+
+        return response(['data' => new ResultResource($results),
+         'message' => 'Retrieved followers'], 200);
     }
 
 
@@ -111,7 +179,9 @@ class UserController extends Controller
             'bio' => $request->input('bio'),
             'phone' => $request->input('phone'),
             'type' => $request->input('type'),
-            'address' => $request->input('address')
+            'address' => $request->input('address'),
+            'following' => 0,
+            'followers' => 0
         ]);
 
         // Token::where('user_id', $user->id)
@@ -170,9 +240,25 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(User $user, User $me)
     {
-        return response(['data' => new ResultResource($user),
+        $query = DB::table('user_follower')->where('user_id', $user->id)
+                ->where('follower_id', $me->id)->get();
+
+        $followingUser = 0;
+        if($query->isEmpty()) {
+            $followingUser = 0;
+        } else {
+            $followingUser = 1;
+        }
+
+        $userquery = DB::table('users')->where('id', $user->id)->get();
+
+        foreach ($userquery as $key) {
+            $key->you_follow = $followingUser;
+        }
+
+        return response(['data' => new ResultResource($userquery),
         'message' => 'Retrieved successfully'], 200);
     }
 

@@ -17,11 +17,20 @@ class GroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(User $user)
     {
         $groups = DB::table('groups')->orderBy('member_count')->get();
         foreach ($groups as $row) {
             $row->created_at = CommentController::diffHumans($row);
+
+            $query = DB::table('group_users')->where('user_id', $user->id)
+                    ->where('group_id', $row->id)->get();
+
+            if($query->isEmpty()) {
+                $row->is_member = '0';
+            } else {
+                $row->is_member = '1';
+            }
         }
         return response(['data' => new ResultResource($groups),
         'message' => 'Group created successfully'], 200);
@@ -43,6 +52,7 @@ class GroupController extends Controller
 
         foreach ($groups as $row) {
             $row->created_at = CommentController::diffHumans($row);
+            $row->is_member = '1';
         }
         return response(['data' => new ResultResource($groups),
         'message' => 'Retrieved successfully'], 200);
@@ -155,19 +165,22 @@ class GroupController extends Controller
         foreach ($groups_query as $row) {
             $row->created_at = CommentController::diffHumans($row);
         }
-        $is_admin = $group->admin_id == $user->id;
+
         $admin = DB::table('users')->where('id', $group->admin_id)->get();
-        $group_users_query = DB::table('group_users')->where('group_id', $group->id)->get();
-        $users = collect();
-        foreach ($group_users_query as $row) {
-            $users = $users->merge(DB::table('users')->where('id', $row->user_id)->get());
+
+        $me_query = DB::table('group_users')->where('group_id', $group->id)
+                            ->where('user_id', $user->id)->get();
+
+        if($me_query->isEmpty()) {
+            $is_member = '0';
+        } else {
+            $is_member = '1';
         }
 
         $results = [
             'group' => $groups_query,
             'admin' => $admin,
-            'users' => $users,
-            'is_admin' => $is_admin
+            'is_member' => $is_member
         ];
         return response(['data' => new ResultResource($results),
             'message' => 'Retrieved successfully'], 200);
