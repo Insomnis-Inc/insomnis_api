@@ -149,7 +149,7 @@ class PostController extends Controller
 
         if($event) {
             $event = DB::table('events')->insert([
-                'id' => Uuid::uuid4(),
+                // 'id' => Uuid::uuid4(),
                 'event_type' => $request->input('event_type') ?? 'Clubs',
                 'post_id' => $post->id
             ]);

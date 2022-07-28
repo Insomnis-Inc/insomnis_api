@@ -44,7 +44,7 @@ Route::post('users/{user}/profile_photo', 'UserController@changeProfilePhoto');
 
 Route::get('users/{user}/profile/{me}', 'UserController@show');
 
-// Route::get('usersindex', 'UserController@index');
+Route::get('usersindex', 'UserController@index');
 
 // follow
 Route::get('users/{user}/follow/{toFollow}', 'UserController@follow');

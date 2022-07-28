@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Validator;
@@ -24,13 +25,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        DB::table('user_follower')->truncate();
-        $query = DB::table('users')->get();
+        // DB::table('user_follower')->truncate();
+        $query = DB::table('groups')->get();
         foreach ($query as $row) {
-            $user = User::find($row->id);
+            $user = Group::find($row->id);
             $user->update([
-                'following' => 0,
-                'followers' => 0
+                'profile_pic' => 'https://storage.googleapis.com/insomnis_assets/profile.png',
+                'cover_pic' => 'https://storage.googleapis.com/insomnis_assets/profile.png'
             ]);
 
             $user->save();
@@ -304,6 +305,8 @@ class UserController extends Controller
             $object = $bucket->upload($file, [
                 'name' => $objectName
             ]);
+
+            $img_name = 'https://storage.googleapis.com/' . $bucketName . '/' . $objectName;
         } else {
             $img_name = 'https://storage.googleapis.com/insomnis_assets/profile.png';
             if($cover) {
@@ -396,7 +399,7 @@ class UserController extends Controller
     {
         // ADD SELLER DETAILS
         $user->update([
-            'display_name' => $request->input('display_name'),
+            'display_name' => $request->input('username'),
             'username' => $request->input('username'),
             'bio' => $request->input('bio'),
             'address' => $request->input('address'),
