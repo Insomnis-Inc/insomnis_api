@@ -89,6 +89,8 @@ class CommentController extends Controller
 
         $comment->increment('likes');
 
+        NotificationController::create(' liked your comment', $comment->creator_id, $user->id);
+
         return response([
             'message' => 'Liked successfully'], 200);
     }
@@ -125,7 +127,7 @@ class CommentController extends Controller
      */
     public function store(Request $request, User $user)
     {
-        $comment = Comment::create([
+        Comment::create([
             'id' => Uuid::uuid4(),
             'creator_id' => $user->id,
             'post_id' => $request->input('post_id'),
@@ -138,10 +140,12 @@ class CommentController extends Controller
         if($request->input('post_id') != null) {
             $post = Post::find($request->input('post_id'));
             $post->increment('comments');
+            NotificationController::create(' commented on your post', $post->creator_id, $user->id);
         } else {
             if($request->input('comment_id') != null) {
                 $comment = Comment::find($request->input('comment_id'));
                 $comment->increment('comments');
+                NotificationController::create(' replied to your comment', $comment->creator_id, $user->id);
             }
         }
 

@@ -131,3 +131,6 @@ Route::get('groups/{group}/users/{user}/remove', 'GroupController@removeUsers');
 Route::get('search/{term}/groups/{group}/users/{user}', 'GroupController@searchGroupPosts'); //
 Route::get('groups/{group}/users/{user}/posts', 'GroupController@showGroupPosts'); //
 Route::post('groups/{user}/posts', 'GroupController@storePost'); //
+
+// NOTIFICATIONS
+Route::get('notifications/{user}', 'NotificationController@index');

@@ -88,6 +88,8 @@ class PostController extends Controller
 
         $post->increment('likes');
 
+        NotificationController::create(' liked your post', $post->creator_id, $user->id);
+
         return response([
             'message' => 'Liked successfully'], 200);
     }
