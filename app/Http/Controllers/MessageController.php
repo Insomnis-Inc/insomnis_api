@@ -28,7 +28,18 @@ class MessageController extends Controller
                 'id' => Uuid::uuid4(),
                 'member_count' => $request->input('member_count'),
             ]);
+            DB::table('user_chatrooms')->insert([
+                'user_id' => $user->id,
+                'chatroom_id' => $chatRoom->id
+            ]);
             // add the receiver or group
+            $receivers = $request->input('receiverIds');
+            foreach ($receivers as $key) {
+                DB::table('user_chatrooms')->insert([
+                    'user_id' => $key,
+                    'chatroom_id' => $chatRoom->id
+                ]);
+            }
         } else {
             $chatRoom = ChatRoom::find($request->input('chatroom_id'));
         }

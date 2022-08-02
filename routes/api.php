@@ -134,3 +134,8 @@ Route::post('groups/{user}/posts', 'GroupController@storePost'); //
 
 // NOTIFICATIONS
 Route::get('notifications/{user}', 'NotificationController@index');
+
+// MESSAGES
+Route::get('chatrooms/{user}/chats', 'ChatRoomController@userChatRooms');
+Route::get('messages/{chatRoom}', 'ChatRoomController@allMessages');
+Route::post('messages/{user}/create', 'MessageController@store');
