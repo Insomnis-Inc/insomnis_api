@@ -13,9 +13,9 @@ class DeleteIdEventsTable extends Migration
      */
     public function up()
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('id');
-        });
+        // Schema::table('events', function (Blueprint $table) {
+        //     $table->dropColumn('id');
+        // });
     }
 
     /**
