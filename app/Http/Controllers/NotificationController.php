@@ -36,11 +36,12 @@ class NotificationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public static function create($message, User $receiver, $senderId = null)
+    public static function create($message, $receiverId, $senderId = null)
     {
         Notification::create([
+            'id' => Uuid::uuid4(),
             'message' => $message,
-            'receiver_id' => $receiver->id,
+            'receiver_id' => $receiverId,
             'sender_id' => $senderId
         ]);
     }

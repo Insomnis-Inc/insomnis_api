@@ -43,7 +43,7 @@ class UserController extends Controller
         $this->followUser($user, $toFollow);
         $user->increment('following');
         $toFollow->increment('followers');
-        NotificationController::create(' follows you', $toFollow, $user->id);
+        NotificationController::create(' follows you', $toFollow->id, $user->id);
         return response([
          'message' => 'Followed Successfully'], 200);
     }
